@@ -20,7 +20,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -43,27 +42,32 @@ func main() {
 		os.Exit(1)
 	}
 
+	input := flag.Arg(0)
+	fmt.Println(Generate(&input, output, header))
+}
+
+// Generate does bulk of the work and is exposed here for testing purposes
+func Generate(input, output, header *string) string {
 	toc := "## " + *header + "\n"
 	counts := []int{0}
 
-	input, err := ioutil.ReadFile(flag.Arg(0))
-	must(err, flag.Arg(0))
+	src, err := ioutil.ReadFile(*input)
+	must(err, *input)
 
 	opts := blackfriday.WithExtensions(blackfriday.CommonExtensions | blackfriday.AutoHeadingIDs)
-	blackfriday.New(opts).Parse(input).Walk(
+	blackfriday.New(opts).Parse(src).Walk(
 		func(n *blackfriday.Node, entering bool) blackfriday.WalkStatus {
 			if entering && n.Type == blackfriday.Heading {
-				toc, counts = processHeading(n, toc, counts)
+				toc, counts = processHeading(n, toc, counts, header)
 			}
 			return blackfriday.GoToNext
 		})
 
 	// must end in \n\n so we can search for section easily
 	toc += "\n"
+
 	if *output == "" {
-		_, err = io.WriteString(os.Stdout, toc)
-		must(err, "error writing to output")
-		return
+		return toc
 	}
 
 	data, err := ioutil.ReadFile(*output)
@@ -71,7 +75,8 @@ func main() {
 	s := string(data)
 	idx := strings.Index(s, "## "+*header+"\n")
 	if idx < 0 {
-		errlog.Fatalf("Could not locate '## %s' line in %s.", *header, *output)
+		panic(fmt.Errorf("Could not locate '## %s' line in %s.", *header, *output))
+
 	}
 	before, after := s[:idx], s[idx:]
 	idx = strings.Index(after, "\n\n")
@@ -82,9 +87,10 @@ func main() {
 	}
 	s = before + toc + after
 	must(ioutil.WriteFile(*output, []byte(s), 0644), *output)
+	return ""
 }
 
-func processHeading(n *blackfriday.Node, toc string, counts []int) (string, []int) {
+func processHeading(n *blackfriday.Node, toc string, counts []int, header *string) (string, []int) {
 	if n.HeadingData.Level == 1 {
 		return toc, counts
 	}
