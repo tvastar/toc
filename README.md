@@ -12,7 +12,7 @@ A simple table of contents generator for markdowns written in golang
 ## Install
 
 ```sh
-$ go get github.com/tvastar/toc/toc.go
+$ go get github.com/tvastar/toc
 ```
 
 ## Usage
@@ -22,15 +22,22 @@ The table of contents of this README.md is itself maintaained using this tool.
 ### Output to stdin
 
 ```sh
-$ toc $GOPATH/github.com/tvastar/toc/README.md
-```sh
+$ toc $(go env GOPATH)/src/github.com/tvastar/toc/README.md
+## Table of Contents
+1. [Contents](#contents)
+2. [Install](#install)
+3. [Usage](#usage)
+    1. [Output to stdin](#output-to-stdin)
+    2. [Inplace update](#inplace-update)
+    3. [Custom heading IDs](#custom)
+```
 
 ### Inplace update
 
 ```sh
-$ cd $GOPATH/github.com/tvastar/toc
+$ cd $(go env GOPATH)/src/github.com/tvastar/toc
 $ toc -o README.md -h Contents README.md
-```sh
+```
 
 ### Custom heading IDs {#custom}
 
