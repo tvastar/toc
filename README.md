@@ -1,5 +1,10 @@
 # toc
 
+[![Status](https://travis-ci.com/tvastar/toc.svg?branch=master)](https://travis-ci.com/tvastar/toc?branch=master)
+[![GoDoc](https://godoc.org/github.com/tvastar/toc?status.svg)](https://godoc.org/github.com/tvastar/toc)
+[![codecov](https://codecov.io/gh/tvastar/toc/branch/master/graph/badge.svg)](https://codecov.io/gh/tvastar/toc)
+[![Go Report Card](https://goreportcard.com/badge/github.com/tvastar/toc)](https://goreportcard.com/report/github.com/tvastar/toc)
+
 A simple table of contents generator for markdowns written in golang
 
 ## Contents
