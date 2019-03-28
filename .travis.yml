@@ -1,0 +1,9 @@
+language: go
+before_script:
+- go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+- go get -u gopkg.in/russross/blackfriday.v2
+- bash ./x/lint.sh
+notifications:
+  email: false
+script: bash ./x/coverage.sh
+after_success: bash ./x/upload_coverage.sh bash <(curl -s https://codecov.io/bash)
